@@ -6,7 +6,6 @@ var logger = require('morgan');
 var fs = require('fs');
 
 var indexRouter = require('./routes/Telegram');
-var usersRouter = require('./routes/users');
 
 var app = express();
 
