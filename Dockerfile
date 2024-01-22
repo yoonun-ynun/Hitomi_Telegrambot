@@ -4,6 +4,10 @@ WORKDIR /usr/src/Telegram
 
 COPY package*.json ./
 
+RUN apt-get update -y
+
+RUN apt-get install ffmpeg -y
+
 RUN npm install
 
 COPY . .
