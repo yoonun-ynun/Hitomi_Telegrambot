@@ -23,7 +23,7 @@ function logResponse(data){
   var getdate = new Date();
   var date = getdate.getFullYear() + '-' + ('0' + (getdate.getMonth() + 1)).slice(-2) + '-' + ('0' + getdate.getDate()).slice(-2)
   var time = `${('0' + getdate.getHours()).slice(-2)}:${('0' + getdate.getMinutes()).slice(-2)}:${('0' + getdate.getSeconds()).slice(-2)}`;
-  console.error('[log/' + date  + '/' + time +']: response json logged in logs folder');
+  console.log('[log/' + date  + '/' + time +']: response json logged in logs folder');
   var file_name = "./logs/response_log_" + date + ".log"
   fs.appendFile(file_name, `[${time}]: ${JSON.stringify(data)}\n`, (err) => {if(err) throw err;});	
 }

@@ -14,7 +14,7 @@ router.post("/", (req, res) => {
 		if(msg_info.message.entities){
 			if(msg_info.message.entities[0].type == "bot_command"){
 				var cmd = message.split(' ')[0];
-				var msg = message.substring(cmd.length);
+				var msg = message.substring(cmd.length + 1);
 				if(cmd == '/start'){
 					command.start(msg, chat_id);   
 				}

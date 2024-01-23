@@ -8,6 +8,8 @@ RUN apt-get update -y
 
 RUN apt-get install ffmpeg -y
 
+RUN mkdir temp
+
 RUN npm install
 
 COPY . .
