@@ -62,7 +62,7 @@ function FfmpegSync(input, output){
 			.videoCodec('libvpx-vp9')
 			.fps(30)
 			.noAudio()
-			.videoBitrate('85k')
+			.videoBitrate('560k')
 			.videoFilters('setpts=(' + fast + ')*PTS')
 			.on('error', function(err){return reject(new Error(err))})
 			.on('end', () => {resolve()})
@@ -74,7 +74,7 @@ function FfmpegSync(input, output){
 					.videoCodec('libvpx-vp9')
 					.fps(30)
 					.noAudio()
-					.videoBitrate('85k')
+					.videoBitrate('560k')
 					.on('error', function(err){return reject(new Error(err))})
 					.on('end', () =>{resolve()})
 					.save(output);
