@@ -17,10 +17,11 @@ var getDCcon = {
 module.exports = getDCcon
 function manage(complete){
 	function startqueue(){
-		download(dcqueue[0].number, dcqueue[0].images).then(() => {
-			dcqueue[0].complete()
-			if(dcqueue.length != 0){
-				startqueue()
+		download(dcqueue[0].number, dcqueue[0].images).then((path) => {
+			dcqueue[0].complete(path).then(() => {
+				if(dcqueue.length != 0){
+					startqueue()
+				}
 			}
 		})
 	}
@@ -29,6 +30,7 @@ function manage(complete){
 		console.log('start')
 	}
 }
+
 
 async function download(number, images){
 	var paths = []
@@ -46,6 +48,7 @@ async function download(number, images){
 	for(var i = 0;i<paths.length;i++){
 		await FfmpegSync(paths[i], './temp/conv_' + i + '.webm');
 	}
+	return paths.map(function(element){return element.replaceAll('dccon', 'conv').replaceAll('png', 'webm').replaceAll('gif', 'webm')})
 }
 
 function FfmpegSync(input, output){

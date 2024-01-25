@@ -1,5 +1,6 @@
 var fetch = require('node-fetch')
 var fs = require('fs')
+var FormData = require('form-data')
 
 var key = process.env.BOT_KEY;
 var bot_addr = 'https://api.telegram.org/bot' + key + '/';
@@ -15,7 +16,46 @@ var Action = {
                 })
 		.then((response) => response.json())
 		.then((data) => logResponse(data))
+	},
+	createNewStickerSet: createNewStickerSet,
+	getStickerSet: async function(name){
+		var result = await fetch(bot_addr + 'sendMessage', {
+			method: "POST",
+			headers:{"Content-Type": "application/json"},
+			body: JSON.stringify({name:name})
+		})
+		var json = await result.json()
+		logResponse(json)
+		return json
+	},
+	sendSticker: async function(chat_id, file_id){
+		var result = await fetch(bot_addr + 'sendSticker', {
+			method: "POST",
+			headers:{"Content-Type": "application/json"},
+			body: JSON.stringify({chat_id:chat_id, file_id:file_id})
+		})
+		result.json().then((data) => logResponse(data))
 	}
+
+}
+
+async function createNewStickerSet(user_id, name, title, stickers, sticker_format, inputpath){
+	var body = new FormData()
+	body.append('user_id', user_id)
+	body.append('name', name)
+	body.append('title', title)
+	body.append('stickers', JSON.stringify(stickers))
+	body.append('sticker_format', sticker_format)
+	for(var i = 0;i<inputpath.length;i++){
+		var buffer = fs.readFileSync(inputpath[i], null).buffer
+		body.append(`${i}dccon`, buffer)
+	}
+	var res = await fetch(bot_addr + 'createNewStickerSet',{
+		method:"POST",
+		headers:{"Content-Type": "multipart/form-data"}
+		body
+	})
+	res.json().then((data) => logResponse(data))
 }
 
 
