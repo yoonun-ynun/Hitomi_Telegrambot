@@ -34,7 +34,7 @@ var Action = {
 			headers:{"Content-Type": "application/json"},
 			body: JSON.stringify({chat_id:chat_id, file_id:file_id})
 		})
-		result.json().then((data) => logResponse(data))
+		result.json().then((data) => logResponse(data)).catch((error) => console.error(error))
 	}
 
 }
@@ -47,15 +47,14 @@ async function createNewStickerSet(user_id, name, title, stickers, sticker_forma
 	body.append('stickers', JSON.stringify(stickers))
 	body.append('sticker_format', sticker_format)
 	for(var i = 0;i<inputpath.length;i++){
-		var buffer = fs.readFileSync(inputpath[i], null).buffer
-		body.append(`${i}dccon`, buffer)
+		body.append(`${i}dccon`, fs.createReadStream(inputpath[i]), {filename: `${i}.webm`, contentType:'video/VP9'})
 	}
 	var res = await fetch(bot_addr + 'createNewStickerSet',{
 		method:"POST",
-		headers:{"Content-Type": "multipart/form-data"}
+		headers:{"Content-Type": "multipart/form-data"},
 		body
 	})
-	res.json().then((data) => logResponse(data))
+	res.json().then((data) => logResponse(data)).catch((error) => console.error(error))
 }
 
 

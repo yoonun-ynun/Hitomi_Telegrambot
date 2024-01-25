@@ -22,7 +22,7 @@ function manage(complete){
 				if(dcqueue.length != 0){
 					startqueue()
 				}
-			}
+			})
 		})
 	}
 	if(dcqueue.length == 1){
