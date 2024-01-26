@@ -15,11 +15,11 @@ function dccon(message, chat_id){
 	if(message == 'queue'){
 		var msg = ""
 		if(dcqueue.length == 0){
-			ac.sendMessage(chat_id, '대기열이 비어있습니다.')
+			action.sendMessage(chat_id, '대기열이 비어있습니다.')
 			return;
 		}else{
 			msg += '대기열 목록(1번이 현재 진행중인 디시콘입니다.):\n'
-			for(var i = 0;i<dcqueue;i++){
+			for(var i = 0;i<dcqueue.length;i++){
 				msg += `${i + 1}: ${dcqueue[i].title} \n`
 			}
 			action.sendMessage(chat_id, msg);
@@ -35,18 +35,24 @@ function dccon(message, chat_id){
 			var title = `${dcqueue[0].title} ${i+1}th by @${process.env.BOT_USERNAME}`
 			var format = "video"
 			var stickers = []
-			var re = path.length%50==0 ? 50*(i+1) : (i*50)+(path.length%50);
-			var f = path.length%50==0 ? 50 : path.length%50;
-			for(var j = 0;j<f;j++){
+			var re = path.length
+			var f = path.length
+			if(i==0 && path.length>50){
+				re = 50
+				f = 50
+			}else if(path.length>50){
+				re = path.length==100 ? 50 : path.length%50
+			}
+			for(var j = 0;j<re;j++){
 				var file = `attach://${j}dccon`
 				var list = ['🍞']
 				stickers[stickers.length] = {sticker:file, emoji_list:list}
 			}
 			var inputpath
-			inputpath = path.slice((i*50), re)
+			inputpath = path.slice((i*50), f)
 			await action.createNewStickerSet(id, name, title, stickers, format, inputpath)
 			var set = await action.getStickerSet(name)
-			var sticker = set.stickers[0].file_id
+			var sticker = set.result.stickers[0].file_id
 			await action.sendSticker(chat_id, sticker)
 		}
 	}

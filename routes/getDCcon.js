@@ -59,28 +59,30 @@ function FfmpegSync(input, output){
 		var duration = parseFloat(data.format.duration);
 		if(duration > 3){
 			var fast = 3/duration - 0.1;
-		ffmpeg(input)
-			.size('512x512')
-			.format('webm')
-			.videoCodec('libvpx-vp9')
-			.fps(30)
-			.noAudio()
-			.videoBitrate('560k')
-			.videoFilters('setpts=(' + fast + ')*PTS')
-			.on('error', function(err){return reject(new Error(err))})
-			.on('end', () => {resolve()})
-			.save(output);
-			}else{
-				ffmpeg(input)
-					.size('512x512')
-					.format('webm')
-					.videoCodec('libvpx-vp9')
-					.fps(30)
-					.noAudio()
-					.videoBitrate('560k')
-					.on('error', function(err){return reject(new Error(err))})
-					.on('end', () =>{resolve()})
-					.save(output);
+			ffmpeg(input)
+				.format('webm')
+				.videoBitrate('560k')
+				.size('512x512')
+				.fps(30)	
+				.noAudio()
+				.videoCodec('libvpx-vp9')
+				.videoFilters('setpts=(' + fast + ')*PTS')
+				.outputOptions('-pix_fmt rgba')
+				.on('error', function(err){return reject(new Error(err))})
+				.on('end', () => {resolve()})
+				.save(output);
+		}else{
+			ffmpeg(input)	
+				.format('webm')
+				.videoBitrate('560k')
+				.size('512x512')
+				.fps(30)
+				.noAudio()
+				.videoCodec('libvpx-vp9')
+				.outputOptions('-pix_fmt rgba')
+				.on('error', function(err){return reject(new Error(err))})
+				.on('end', () =>{resolve()})
+				.save(output);
 			}
 		})
 	})

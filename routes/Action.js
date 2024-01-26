@@ -19,20 +19,22 @@ var Action = {
 	},
 	createNewStickerSet: createNewStickerSet,
 	getStickerSet: async function(name){
-		var result = await fetch(bot_addr + 'sendMessage', {
+		var msg = {"name": name}
+		var result = await fetch(bot_addr + 'getStickerSet', {
 			method: "POST",
 			headers:{"Content-Type": "application/json"},
-			body: JSON.stringify({name:name})
+			body: JSON.stringify(msg)
 		})
-		var json = await result.json()
-		logResponse(json)
-		return json
+		var res_json = await result.json()
+		logResponse(res_json)
+		return res_json
 	},
-	sendSticker: async function(chat_id, file_id){
+	sendSticker: async function(chat_id, sticker){
+		var msg = {"chat_id": chat_id, "sticker": sticker}
 		var result = await fetch(bot_addr + 'sendSticker', {
 			method: "POST",
 			headers:{"Content-Type": "application/json"},
-			body: JSON.stringify({chat_id:chat_id, file_id:file_id})
+			body: JSON.stringify(msg)
 		})
 		result.json().then((data) => logResponse(data)).catch((error) => console.error(error))
 	}
@@ -40,19 +42,18 @@ var Action = {
 }
 
 async function createNewStickerSet(user_id, name, title, stickers, sticker_format, inputpath){
-	var body = new FormData()
-	body.append('user_id', user_id)
-	body.append('name', name)
-	body.append('title', title)
-	body.append('stickers', JSON.stringify(stickers))
-	body.append('sticker_format', sticker_format)
+	var form = new FormData()
+	form.append('user_id', user_id)
+	form.append('name', name)
+	from.append('title', title)
+	form.append('stickers', JSON.stringify(stickers))
+	form.append('sticker_format', sticker_format)
 	for(var i = 0;i<inputpath.length;i++){
-		body.append(`${i}dccon`, fs.createReadStream(inputpath[i]), {filename: `${i}.webm`, contentType:'video/VP9'})
+		form.append(`${i}dccon`, fs.createReadStream(inputpath[i]), {filename: `${i}.webm`, contentType:'video/VP9'})
 	}
 	var res = await fetch(bot_addr + 'createNewStickerSet',{
 		method:"POST",
-		headers:{"Content-Type": "multipart/form-data"},
-		body
+		body: form
 	})
 	res.json().then((data) => logResponse(data)).catch((error) => console.error(error))
 }
