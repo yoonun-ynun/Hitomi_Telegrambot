@@ -26,6 +26,7 @@ router.post("/", (req, res) => {
 		}	 
 	}
 
+	//for full request
 	res.json(200,{ok:true});
 	
 });
