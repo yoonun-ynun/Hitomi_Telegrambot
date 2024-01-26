@@ -16,6 +16,16 @@ var getDCcon = {
 }
 module.exports = getDCcon
 function manage(complete){
+	if(!fs.existsSync('./logs/dccon')){
+		fs.mkdirSync('./logs/dccon');
+	}
+	if(!dcqueue[0].start()){
+		dcqueue.shift()
+		if(dcqueue.length > 0){
+			startqueue()
+		}
+		return
+	}
 	function startqueue(){
 		download(dcqueue[0].number, dcqueue[0].images).then((path) => {
 			dcqueue[0].complete(path).then(() => {

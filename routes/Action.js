@@ -45,7 +45,7 @@ async function createNewStickerSet(user_id, name, title, stickers, sticker_forma
 	var form = new FormData()
 	form.append('user_id', user_id)
 	form.append('name', name)
-	from.append('title', title)
+	form.append('title', title)
 	form.append('stickers', JSON.stringify(stickers))
 	form.append('sticker_format', sticker_format)
 	for(var i = 0;i<inputpath.length;i++){
