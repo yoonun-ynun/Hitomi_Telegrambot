@@ -12,7 +12,7 @@ var getDCcon = {
 			body
 		}).then((response) => response.json()).then((data) => func(data)).catch((error) => {
 			unexist()
-			LogError(err)
+			LogError(error)
 		})
 	},
 	"manage": manage
@@ -24,7 +24,7 @@ function manage(complete){
 	}
 	function startqueue(){
 		if(!dcqueue[0].start()){
-			scqueue.shift()
+			dcqueue.shift()
 			if(dcqueue.length > 0){
 				startqueue()
 			}
@@ -37,7 +37,7 @@ function manage(complete){
 					startqueue()
 				}
 			}).catch((error) => {
-				dcqueue[0].SendError("텔레그램 서버에 오류가 생겼거나 봇 서버의 버전이 오래된 것 같습니다.")
+				dcqueue[0].Send_Error("텔레그램 서버에 오류가 생겼거나 봇 서버의 버전이 오래된 것 같습니다.")
 				LogError(error)
 				dcqueue.shift()
 				if(dcqueue.length != 0){

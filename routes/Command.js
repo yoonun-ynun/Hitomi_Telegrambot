@@ -106,7 +106,7 @@ function dccon(message, chat_id){
 	}
 	function Send_Error(message){
 		var msg = "Error:\n" + message + "관리자에게 문의해 주세요."
-		action.snedMessage(chat_id, msg);
+		action.sendMessage(chat_id, msg);
 	}
 	function send(json){
 		dcqueue[dcqueue.length] = {"number": message,"title": json.info.title, "images": json.detail, "chat_id": chat_id, "complete": complete, "start": start, "Send_Error": Send_Error};
@@ -114,7 +114,7 @@ function dccon(message, chat_id){
 		getDCcon.manage();
 	}
 	function unexist(){
-		action.sendMessage('존재하지 않는 디시콘입니다.')
+		action.sendMessage(chat_id,'존재하지 않는 디시콘입니다.')
 	}
 	getDCcon.getinfo(message, send, unexist)
 }
