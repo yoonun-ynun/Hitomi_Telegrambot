@@ -36,7 +36,7 @@ var Action = {
 			headers:{"Content-Type": "application/json"},
 			body: JSON.stringify(msg)
 		})
-		result.json().then((data) => logResponse(data)).catch((error) => console.error(error))
+		result.json().then((data) => logResponse(data))
 	}
 
 }
@@ -55,7 +55,7 @@ async function createNewStickerSet(user_id, name, title, stickers, sticker_forma
 		method:"POST",
 		body: form
 	})
-	res.json().then((data) => logResponse(data)).catch((error) => console.error(error))
+	res.json().then((data) => logResponse(data))
 }
 
 

@@ -104,12 +104,19 @@ function dccon(message, chat_id){
 		await makesticker(path);
 		dcqueue.shift();
 	}
+	function Send_Error(message){
+		var msg = "Error:\n" + message + "관리자에게 문의해 주세요."
+		action.snedMessage(chat_id, msg);
+	}
 	function send(json){
-		dcqueue[dcqueue.length] = {"number": message,"title": json.info.title, "images": json.detail, "chat_id": chat_id, "complete": complete, "start": start};
+		dcqueue[dcqueue.length] = {"number": message,"title": json.info.title, "images": json.detail, "chat_id": chat_id, "complete": complete, "start": start, "Send_Error": Send_Error};
 		action.sendMessage(chat_id, `대기열에 추가되었습니다.[${dcqueue.length}/${dcqueue.length}]`)
 		getDCcon.manage();
 	}
-	getDCcon.getinfo(message, send)
+	function unexist(){
+		action.sendMessage('존재하지 않는 디시콘입니다.')
+	}
+	getDCcon.getinfo(message, send, unexist)
 }
 
 module.exports = Command
