@@ -2,7 +2,7 @@ var express = require("express");
 var router = express.Router();
 var command = require("./Command");
 
-router.post("/", (req, res) => {
+router.post("/", (req, res) => { 
 	var msg_info = req.body;
 	console.log(msg_info)
 	var message;
@@ -21,7 +21,9 @@ router.post("/", (req, res) => {
 				if(cmd == '/dccon'){
 					command.dccon(msg, chat_id);
 				}
-				
+				if(cmd == '/hitomi'){
+					command.hitomi(msg, chat_id);
+				}
 			}
 		}	 
 	}

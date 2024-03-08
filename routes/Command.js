@@ -1,5 +1,6 @@
 var fetch = require('node-fetch')
 var action = require('./Action')
+var dlH = require('./DlHitomi')
 var fs = require('fs')
 
 global.dcqueue = []
@@ -8,7 +9,18 @@ var Command = {
 	start: function(message, chat_id){
 		action.sendMessage(chat_id, "Hello World!!\nyour text: " + message);
 	},
-	dccon: dccon
+	dccon: dccon,
+	hitomi: hitomi
+} 
+
+function hitomi(message, chat_id){
+	dlH.page(message, 1).then((result) => {
+		if(!result){
+			action.sendMessage(chat_id, "해당하는 번호의 작품이 없습니다.");
+		}else{
+			action.sendPhoto(chat_id, result);
+		}
+	})
 }
 
 function dccon(message, chat_id){

@@ -2,7 +2,7 @@ var fetch = require("node-fetch");
 var fs = require("fs");
 var FormData = require('form-data');
 
-var getDCcon = {
+var getDCcon = { 
 	"getinfo": function(code, func, unexist){
 		var body = FormData();
 		body.append("package_idx", code)
