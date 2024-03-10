@@ -58,6 +58,16 @@ async function createNewStickerSet(user_id, name, title, stickers, sticker_forma
 	res.json().then((data) => logResponse(data))
 }
 
+function sendPhoto(chat_id ,buffer){
+	var form = new FormData();
+	form.append('photo', buffer);
+	form.append('chat_id', chat_id);
+	fetch(bot_addr + 'sendPhoto', {
+		method: "POST",
+		body: form
+	}).then((res) => res.json()).then((data) => logResponse(data));
+}
+
 
 function logResponse(data){
   var getdate = new Date();
@@ -66,16 +76,6 @@ function logResponse(data){
   console.log('[log/' + date  + '/' + time +']: response json logged in logs folder');
   var file_name = "./logs/response_log_" + date + ".log"
   fs.appendFile(file_name, `[${time}]: ${JSON.stringify(data)}\n`, (err) => {if(err) throw err;});	
-} 
-
-function sendPhoto(chat_id ,buffer){
-	var form = new FormData();
-	form.append('chat_id', chat_id);
-	form.append('photo', buffer, {filename: '1.webp', contentType: 'image/webp'})
-	fetch(bot_addr + 'sendPhoto', {
-		method: "POST",
-		body: form
-	}).then((res) => res.json()).then((data) => logResponse(data));
-}
+} 		
 
 module.exports = Action;
