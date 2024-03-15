@@ -60,7 +60,7 @@ async function createNewStickerSet(user_id, name, title, stickers, sticker_forma
 
 function sendPhoto(chat_id ,buffer){
 	var form = new FormData();
-	form.append('photo', buffer);
+	form.append('photo', buffer, {filename: 'hitomi.webp', contentType:'image/webp'});
 	form.append('chat_id', chat_id);
 	fetch(bot_addr + 'sendPhoto', {
 		method: "POST",

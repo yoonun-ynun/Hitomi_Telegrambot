@@ -4,12 +4,15 @@ var fs = require('fs')
 async function page(number, page){
 	var res = await fetch(`https://ltn.hitomi.la/galleries/${number}.js`);
 	var body = await res.text();
-	console.log(body);
+	try{
 	eval(body);
+	}catch(err){
+		return;
+	}
 	if(!galleryinfo){
 		return;
 	}
-	var hash = galleryinfo.files[page].hash;
+	var hash = galleryinfo.files[page-1].hash;
 	var addr = await Get_Address(hash);
 	console.log("addr: "+addr);
 	if(!addr){
@@ -17,7 +20,7 @@ async function page(number, page){
 	}
 	var img = await fetch(addr, {
 		method: "GET",
-		headers:{'Referer': `https://hitomi.ls/reader/${number}.html#1`}
+		headers:{'Referer': `https://hitomi.la/reader/${number}.html#1`}
 	})
 	var buffer = await img.buffer();
 	console.log(buffer);
@@ -32,7 +35,6 @@ async function Get_Address(hash){
 	var key = parseInt(hash.charAt(hash.length-1) + hash.charAt(hash.length-3) + hash.charAt(hash.length-2), 16)
 	var fres = await fetch(`https://ltn.hitomi.la/gg.js`);
 	var body = await fres.text();
-	console.log("gg.js: "+body);
 	var code = body.substr(14);
 	eval(code);
 	if(!gg){
