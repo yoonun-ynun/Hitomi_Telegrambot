@@ -37,8 +37,8 @@ var Action = {
 			body: JSON.stringify(msg)
 		})
 		result.json().then((data) => logResponse(data))
-	}
-
+	},
+	sendPhoto: sendPhoto
 }
 
 async function createNewStickerSet(user_id, name, title, stickers, sticker_format, inputpath){
@@ -58,6 +58,19 @@ async function createNewStickerSet(user_id, name, title, stickers, sticker_forma
 	res.json().then((data) => logResponse(data))
 }
 
+function sendPhoto(chat_id ,buffer, reply_markup){
+	var form = new FormData();
+	form.append('photo', buffer, {filename: 'hitomi.webp', contentType:'image/webp'});
+	form.append('chat_id', chat_id);
+	if(reply_markup){
+		form.append('reply_markup', JSON.stringify(reply_markup));
+	}
+	fetch(bot_addr + 'sendPhoto', {
+		method: "POST",
+		body: form
+	}).then((res) => res.json()).then((data) => logResponse(data));
+}
+
 
 function logResponse(data){
   var getdate = new Date();
@@ -66,7 +79,6 @@ function logResponse(data){
   console.log('[log/' + date  + '/' + time +']: response json logged in logs folder');
   var file_name = "./logs/response_log_" + date + ".log"
   fs.appendFile(file_name, `[${time}]: ${JSON.stringify(data)}\n`, (err) => {if(err) throw err;});	
-}
-
+} 		
 
 module.exports = Action;
