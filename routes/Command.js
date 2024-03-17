@@ -10,7 +10,13 @@ var Command = {
 		action.sendMessage(chat_id, "Hello World!!\nyour text: " + message);
 	},
 	dccon: dccon,
-	hitomi: hitomi
+	hitomi: hitomi,
+	viewer: function(chat_id, key){
+		action.sendMessage(chat_id, `Called viewer key: ${key}`)
+	},
+	tags: function(chat_id, key){
+		action.sendMessage(chat_id, `Called tags key: ${key}`)
+	}
 } 
 
 function hitomi(message, chat_id){
@@ -18,7 +24,14 @@ function hitomi(message, chat_id){
 		if(!result){
 			action.sendMessage(chat_id, "해당하는 번호의 작품이 없습니다.");
 		}else{
-			action.sendPhoto(chat_id, result);
+			action.sendMessage(chat_id, `https://hitomi.la/reader/${message}.html#1`)
+			var inline = {
+				inline_keyboard:[
+					[{"text": "get viewer", "callback_data": JSON.stringify({Command: "view", key: message})}],
+					[{"text": "get tags", "callback_data": JSON.stringify({Command: "tags", key: message})}]
+				]
+			}
+			action.sendPhoto(chat_id, result, inline);
 		}
 	})
 }

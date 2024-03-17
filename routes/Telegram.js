@@ -6,6 +6,16 @@ router.post("/", (req, res) => {
 	var msg_info = req.body;
 	console.log(msg_info)
 	var message;
+	if(msg_info.callback_query){
+		var callback = msg_info.callback_query;
+		var chat_id = callback.message.chat.id;
+		var data = JSON.parse(callback.data);
+		if(data.Command == "view"){
+			command.viewer(chat_id, data.key);
+		}else if(data.Command == "tags"){
+			command.tags(chat_id, data.key);
+		}
+	}
 	if(msg_info.message){
 		message = msg_info.message.text;
 		console.log(message);

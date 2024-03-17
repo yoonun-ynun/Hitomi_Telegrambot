@@ -58,10 +58,13 @@ async function createNewStickerSet(user_id, name, title, stickers, sticker_forma
 	res.json().then((data) => logResponse(data))
 }
 
-function sendPhoto(chat_id ,buffer){
+function sendPhoto(chat_id ,buffer, reply_markup){
 	var form = new FormData();
 	form.append('photo', buffer, {filename: 'hitomi.webp', contentType:'image/webp'});
 	form.append('chat_id', chat_id);
+	if(reply_markup){
+		form.append('reply_markup', JSON.stringify(reply_markup));
+	}
 	fetch(bot_addr + 'sendPhoto', {
 		method: "POST",
 		body: form
