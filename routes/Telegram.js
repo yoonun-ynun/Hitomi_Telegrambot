@@ -9,11 +9,20 @@ router.post("/", (req, res) => {
 	if(msg_info.callback_query){
 		var callback = msg_info.callback_query;
 		var chat_id = callback.message.chat.id;
+		var message_id = callback.message.message_id;
 		var data = JSON.parse(callback.data);
+
+
 		if(data.Command == "view"){
-			command.viewer(chat_id, data.key);
+			command.viewer(data.key, chat_id);
 		}else if(data.Command == "tags"){
-			command.tags(chat_id, data.key);
+			command.tags(data.key, chat_id);
+		}else if(data.Command == "info"){
+			command.hitomi(data.key, chat_id);
+		}else if(data.Command == "view_next"){
+			command.view_next(data.key, data.page, chat_id, message_id, true);
+		}else if(data.Command == "view_prev"){
+			command.view_next(data.key, data.page, chat_id, message_id, false);
 		}
 	}
 	if(msg_info.message){
@@ -33,6 +42,9 @@ router.post("/", (req, res) => {
 				}
 				if(cmd == '/hitomi'){
 					command.hitomi(msg, chat_id);
+				}
+				if(cmd == '/view'){
+					command.viewer(msg, chat_id);
 				}
 			}
 		}	 
