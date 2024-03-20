@@ -11,24 +11,87 @@ var Command = {
 	},
 	dccon: dccon,
 	hitomi: hitomi,
-	viewer: function(chat_id, key){
-		action.sendMessage(chat_id, `Called viewer key: ${key}`)
-	},
-	tags: function(chat_id, key){
-		action.sendMessage(chat_id, `Called tags key: ${key}`)
-	}
+	viewer: viewer,
+	view_next: view_next,
+	tags: tags,
 } 
 
+function tags(key, chat_id){
+	dlH.getInfo(key).then((result) =>{
+		if(!result){
+			action.sendMessage(chat_id, "해당하는 번호의 작품이 없습니다.");
+		}
+		var text = `Title:\n${result.title}\nTags:\n`;
+		text += result.tags.join(',');
+		action.sendMessage(chat_id, text);
+	})
+}
+
+function view_next(key, page, chat_id, message_id, norp){
+	dlH.page(key, page).then((result) => {
+		if(!result){
+			if(norp){
+				action.sendMessage(chat_id, "마지막 페이지 입니다.");
+			}else{
+				action.sendMessage(chat_id, "첫번째 페이지 입니다.");
+			}
+		}else{
+			var inline = {
+				inline_keyboard:[
+					[
+						{"text": "Prev", "callback_data": JSON.stringify({Command: "view_prev", key: key, page: page-1})},
+						{"text": "Next", "callback_data": JSON.stringify({Command: "view_next", key: key, page: page+1})}
+					],
+					[{"text": "Get info", "callback_data": JSON.stringify({Command: "info", key: key})}]
+				]
+			}
+			action.editMessagePhoto(chat_id, message_id, result, inline);
+		}
+	})
+}
+
+async function viewer(key, chat_id){
+	var info = await dlH.getInfo(key);
+	if(!info){
+		action.sendMessage(chat_id, "해당하는 번호의 작품이 없습니다.");
+		return;
+	}
+	action.sendMessage(chat_id, `Viewer about: ${info.title}`)
+
+	dlH.page(key, 1).then((result) => {
+		if(!result){
+			action.sendMessage(chat_id, "해당하는 번호의 작품이 없습니다.");
+		}else{
+			var inline = {
+				inline_keyboard:[
+					[{"text": "Next", "callback_data": JSON.stringify({Command: "view_next", key: key, page: 2})}],
+					[{"text": "Get info", "callback_data": JSON.stringify({Command: "info", key: key})}]
+				]
+			}
+			action.sendPhoto(chat_id, result, inline);
+		}
+	})
+
+}
+
 function hitomi(message, chat_id){
+	dlH.getInfo(message).then((result) => {
+		if(!result){
+			action.sendMessage(chat_id, "해당하는 번호의 작품이 없습니다.");
+			return;
+		}else{
+			action.sendMessage(chat_id, `Title: ${result.title}`)
+		}
+	})
 	dlH.page(message, 1).then((result) => {
 		if(!result){
 			action.sendMessage(chat_id, "해당하는 번호의 작품이 없습니다.");
 		}else{
-			action.sendMessage(chat_id, `https://hitomi.la/reader/${message}.html#1`)
 			var inline = {
 				inline_keyboard:[
-					[{"text": "get viewer", "callback_data": JSON.stringify({Command: "view", key: message})}],
-					[{"text": "get tags", "callback_data": JSON.stringify({Command: "tags", key: message})}]
+					[{"text": "Get viewer", "callback_data": JSON.stringify({Command: "view", key: message})}],
+					[{"text": "Get tags", "callback_data": JSON.stringify({Command: "tags", key: message})}],
+					[{"text": "Download", "callback_data": JSON.stringify({Command: "download", key: message})}]
 				]
 			}
 			action.sendPhoto(chat_id, result, inline);

@@ -38,7 +38,8 @@ var Action = {
 		})
 		result.json().then((data) => logResponse(data))
 	},
-	sendPhoto: sendPhoto
+	sendPhoto: sendPhoto,
+	editMessagePhoto: editMessagePhoto
 }
 
 async function createNewStickerSet(user_id, name, title, stickers, sticker_format, inputpath){
@@ -56,6 +57,23 @@ async function createNewStickerSet(user_id, name, title, stickers, sticker_forma
 		body: form
 	})
 	res.json().then((data) => logResponse(data))
+}
+
+function editMessagePhoto(chat_id, message_id, buffer, reply_markup){
+	var form = new FormData();
+	form.append('chat_id', chat_id);
+	form.append('message_id', message_id);
+	var inputMediaPhoto = {
+		'type': 'photo',
+		'media': 'attach://Hwebp'
+	}
+	form.append('reply_markup', JSON.stringify(reply_markup));
+	form.append('media', JSON.stringify(inputMediaPhoto));
+	form.append('Hwebp', buffer, {filename: 'hitomi.webp', contentType:'image/webp'})
+	fetch(bot_addr + 'editMessageMedia', {
+		method: "POST",
+		body: form
+	}).then((res) => res.json()).then((data) => logResponse(data));
 }
 
 function sendPhoto(chat_id ,buffer, reply_markup){

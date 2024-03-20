@@ -12,7 +12,11 @@ async function page(number, page){
 	if(!galleryinfo){
 		return;
 	}
+	try{
 	var hash = galleryinfo.files[page-1].hash;
+	}catch(err){
+		return;
+	}
 	var addr = await Get_Address(hash);
 	console.log("addr: "+addr);
 	if(!addr){
@@ -49,4 +53,31 @@ async function Get_Address(hash){
 	}
 }
 
-module.exports = {'page': page, 'comic': comic}
+async function getInfo(number){
+	var res = await fetch(`https://ltn.hitomi.la/galleries/${number}.js`);
+	var body = await res.text();
+	try{
+		eval(body);
+	}catch(err){
+		return;
+	}
+	if(!galleryinfo){
+		return;
+	}
+
+	var title = galleryinfo.title;
+	var tag_res = []
+	for(var i = 0;i<galleryinfo.tags.length;i++){
+		var tagname = galleryinfo.tags[i].tag;
+		if(galleryinfo.tags[i].male == 1){
+			tagname = "male: " + tagname;
+		}
+		if(galleryinfo.tags[i].female == 1){
+			tagname = "famale: " + tagname;
+		}
+		tag_res[i] = tagname;
+	}
+	return {title: title, tags: tag_res}
+}
+
+module.exports = {'page': page, 'comic': comic, 'getInfo': getInfo}
