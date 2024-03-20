@@ -13,10 +13,19 @@ var Command = {
 	hitomi: hitomi,
 	viewer: viewer,
 	view_next: view_next,
-	tags: function(chat_id, key){
-		action.sendMessage(chat_id, `Called tags key: ${key}`)
-	}
+	tags: tags,
 } 
+
+function tags(key, chat_id){
+	dlH.getInfo(key).then((result) =>{
+		if(!result){
+			action.sendMessage(chat_id, "해당하는 번호의 작품이 없습니다.");
+		}
+		var text = `Title:\n${result.title}\nTags:\n`;
+		text += result.tags.join(',');
+		action.sendMessage(chat_id, text);
+	})
+}
 
 function view_next(key, page, chat_id, message_id, norp){
 	dlH.page(key, page).then((result) => {
@@ -47,7 +56,7 @@ async function viewer(key, chat_id){
 		action.sendMessage(chat_id, "해당하는 번호의 작품이 없습니다.");
 		return;
 	}
-	action.sendMessage(chat_id, `viewer about: ${info.title}`)
+	action.sendMessage(chat_id, `Viewer about: ${info.title}`)
 
 	dlH.page(key, 1).then((result) => {
 		if(!result){
@@ -71,7 +80,7 @@ function hitomi(message, chat_id){
 			action.sendMessage(chat_id, "해당하는 번호의 작품이 없습니다.");
 			return;
 		}else{
-			action.sendMessage(chat_id, `title: ${result.title}`)
+			action.sendMessage(chat_id, `Title: ${result.title}`)
 		}
 	})
 	dlH.page(message, 1).then((result) => {

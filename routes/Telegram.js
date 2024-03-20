@@ -46,6 +46,9 @@ router.post("/", (req, res) => {
 				if(cmd == '/view'){
 					command.viewer(msg, chat_id);
 				}
+				if(cmd == '/tag'){
+					command.tags(msg, chat_id)
+				}
 			}
 		}	 
 	}
