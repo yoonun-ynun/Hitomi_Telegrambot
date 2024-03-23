@@ -1,4 +1,3 @@
-var fetch = require('node-fetch')
 var action = require('./Action')
 var dlH = require('./DlHitomi')
 var fs = require('fs')
@@ -14,7 +13,64 @@ var Command = {
 	viewer: viewer,
 	view_next: view_next,
 	tags: tags,
+	download: download
 } 
+
+function download(key, chat_id){
+	if(key == 'queue'){
+		var msg = ""
+		if(hqueue.length == 0){
+			action.sendMessage(chat_id, '대기열이 비어있습니다.')
+			return;
+		}else{
+			msg += '대기열 목록(1번이 현재 진행중인 작품입니다.):\n'
+			for(var i = 0;i<hqueue.length;i++){
+				msg += `${i + 1}: ${hqueue[i].title} \n`
+			}
+			action.sendMessage(chat_id, msg);
+			return;
+		}
+	}
+
+	dlH.getInfo(key).then((result) =>{
+		if(!result){
+			action.sendMessage(chat_id, "해당하는 번호의 작품이 없습니다.");
+			return;
+		}
+		hqueue[hqueue.length] = {"title": result.title, "key": key, "chat_id": chat_id}
+		action.sendMessage(chat_id, "대기열에 추가되었습니다.")
+		Hmanage();
+	})
+	
+	function Hmanage(){
+		function startqueue(){
+			dlH.comic(hqueue[0].key, ()=>{
+				action.sendMessage(chat_id, `Download: https://${process.env.DOMAIN}/download/${hqueue[0].key}.zip`);
+				hqueue.shift();
+				if(hqueue.length != 0){
+					startqueue();
+				}
+			}).then((result)=>{
+				if(!result){
+					action.sendMessage(chat_id, "해당하는 번호의 작품이 없습니다.");
+					hqueue.shift();
+					if(hqueue.length != 0){
+						startqueue();
+					}
+				}
+			}).catch((error) => {
+				action.sendMessage(chat_id, "다운로드에 실패하였습니다.");
+				hqueue.shift();
+				if(hqueue.length != 0){
+					startqueue()
+				}
+			})
+		}
+		if(hqueue.length == 1){
+			startqueue();
+		}
+	}
+}
 
 function tags(key, chat_id){
 	dlH.getInfo(key).then((result) =>{
@@ -22,7 +78,7 @@ function tags(key, chat_id){
 			action.sendMessage(chat_id, "해당하는 번호의 작품이 없습니다.");
 		}
 		var text = `Title:\n${result.title}\nTags:\n`;
-		text += result.tags.join(',');
+		text += result.tags.join(', ');
 		action.sendMessage(chat_id, text);
 	})
 }

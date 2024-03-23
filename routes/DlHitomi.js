@@ -1,4 +1,5 @@
 var fetch = require('node-fetch')
+var JSZIP = require('jszip')
 var fs = require('fs')
 
 async function page(number, page){
@@ -18,21 +19,80 @@ async function page(number, page){
 		return;
 	}
 	var addr = await Get_Address(hash);
-	console.log("addr: "+addr);
 	if(!addr){
 		return;
 	}
-	var img = await fetch(addr, {
-		method: "GET",
-		headers:{'Referer': `https://hitomi.la/reader/${number}.html#1`}
-	})
-	var buffer = await img.buffer();
-	console.log(buffer);
+
+	var buffer;
+
+	async function dl(){
+		var img = await fetch(addr, {
+			method: "GET",
+			headers:{'Referer': `https://hitomi.la/reader/${number}.html#1`}
+		})
+		if(img.ok){
+			buffer = await img.buffer();
+		}else if(img.status == 503){
+			await dl();
+		}
+	}
+	await dl();
+	
 	return buffer;
 }
 
-async function comic(number, send_per, send_res){
-	
+async function comic(number, send_res){
+	var res = await fetch(`https://ltn.hitomi.la/galleries/${number}.js`);
+	var body = await res.text();
+	try{
+	eval(body);
+	}catch(err){
+		return;
+	}
+	if(!galleryinfo){
+		return;
+	}
+	console.log(body);
+	var length = galleryinfo.files.length;
+	var count = 0;
+	var zip = new JSZIP();
+	for(var i = 0;i<length;i++){
+		function success(buffer, num){
+			console.log(`${count}/${length} success`);
+			console.log(num +" success");
+			zip.file(num+1 + '.webp', buffer);
+			count++;
+			if(count == length){
+				zip
+				.generateNodeStream({type:'nodebuffer',streamFiles:true})
+				.pipe(fs.createWriteStream(`./hitomi/${number}.zip`))
+				.on('finish', function () {
+    				send_res()
+				});
+			}
+		}
+		async function dl(num){
+			var hash = galleryinfo.files[num].hash;
+			var addr = await Get_Address(hash);
+			if(!addr){
+				return;
+			}
+			fetch(addr, {
+				method: "GET",
+				headers:{'Referer': `https://hitomi.la/reader/${number}.html#1`}
+			}).then((result) => {
+				if(result.ok){
+					console.log(result.status);
+					result.arrayBuffer().then((buffer) => success(buffer, num))
+				}else if(result.status == 503){
+					dl(num);
+				}
+			});
+		}
+		dl(i)
+		
+	}
+	return true;
 }
 
 async function Get_Address(hash){

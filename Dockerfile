@@ -6,6 +6,8 @@ COPY package*.json ./
 
 RUN mkdir temp
 
+RUN mkdir hitomi
+
 RUN npm install
 
 COPY . .

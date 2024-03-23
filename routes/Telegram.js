@@ -23,6 +23,8 @@ router.post("/", (req, res) => {
 			command.view_next(data.key, data.page, chat_id, message_id, true);
 		}else if(data.Command == "view_prev"){
 			command.view_next(data.key, data.page, chat_id, message_id, false);
+		}else if(data.Command == "download"){
+			command.download(data.key, chat_id);
 		}
 	}
 	if(msg_info.message){
@@ -47,7 +49,10 @@ router.post("/", (req, res) => {
 					command.viewer(msg, chat_id);
 				}
 				if(cmd == '/tag'){
-					command.tags(msg, chat_id)
+					command.tags(msg, chat_id);
+				}
+				if(cmd == '/download'){
+					command.download(msg, chat_id);
 				}
 			}
 		}	 
