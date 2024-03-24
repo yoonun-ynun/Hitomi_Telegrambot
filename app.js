@@ -22,16 +22,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 
 app.get('/download/:value', (req, res) =>{
-  console.log(__dirname);
   var key = req.params.value;
   var path = `./hitomi/${key}`;
-  console.log(path);
   if(fs.existsSync(path)){
-    console.log("in here")
     res.download(path, key);
   }else{
-    console.log("in there")
-    res.status(403).send('Bad Request')
+    res.status(403).send('Bad Request');
   }
 })
 

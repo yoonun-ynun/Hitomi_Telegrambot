@@ -52,14 +52,11 @@ async function comic(number, send_res){
 	if(!galleryinfo){
 		return;
 	}
-	console.log(body);
 	var length = galleryinfo.files.length;
 	var count = 0;
 	var zip = new JSZIP();
 	for(var i = 0;i<length;i++){
 		function success(buffer, num){
-			console.log(`${count}/${length} success`);
-			console.log(num +" success");
 			zip.file(num+1 + '.webp', buffer);
 			count++;
 			if(count == length){
@@ -82,10 +79,11 @@ async function comic(number, send_res){
 				headers:{'Referer': `https://hitomi.la/reader/${number}.html#1`}
 			}).then((result) => {
 				if(result.ok){
-					console.log(result.status);
 					result.arrayBuffer().then((buffer) => success(buffer, num))
 				}else if(result.status == 503){
 					dl(num);
+				}else{
+					count++;
 				}
 			});
 		}
